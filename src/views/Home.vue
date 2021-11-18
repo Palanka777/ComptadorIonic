@@ -26,7 +26,7 @@
       </ion-header>
     
       <div id="container">
-        <ion-button color="primary" @click="tapMe">TAP ME</ion-button>
+        <ion-button color="primary" @click="tap">TAP ME</ion-button>
       </div>
     </ion-content>
   </ion-page>
@@ -46,6 +46,8 @@ import {
 } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import {informationCircleOutline} from "ionicons/icons"
+const INITIAL_TIME=5
+const SCORE_INITIAL=0
 export default defineComponent({
   name: 'Home',
   components: {
@@ -61,11 +63,33 @@ export default defineComponent({
     IonCol,
     IonRow
   },
+
   setup(){
-    return{
+    return {
       infoIcon: informationCircleOutline,
-      score: 0,
-      timeLeft: 60
+      started: false,
+      counterInterval: null
+    }
+  },
+  data(){
+    return{
+      score: SCORE_INITIAL,
+      timeLeft: INITIAL_TIME,
+
+    }
+  },
+
+  watch: {
+    // cada vez que la pregunta cambie, esta función será ejecutada
+    timeLeft: function (newtimeLeft) {
+      if (newtimeLeft<=0){
+        this.started = false
+        clearInterval(this.counterInterval)
+        this.showResult()
+        this.timeLeft=INITIAL_TIME
+        this.score=SCORE_INITIAL
+      }
+
     }
   },
   methods: {
@@ -79,20 +103,26 @@ export default defineComponent({
           });
       await alert.present();
     },
-     async tapMe(){
-      console.log('TODO TAP ME');
-
+    async tap() {
+      this.score++
+      if(!this.started){
+        this.counterInterval = setInterval( () => {
+        this.timeLeft--}, 1000)
+        this.started=true
+      }
+    },
+    async showResult(){
       //TOAST
       const toast = await toastController.create({
         color: 'dark',
         duration: 2000,
-        message: 'Paired successfully',
+        message: `Time's up! Your Score was: ${this.score}`,
         showCloseButton: true
       });
 
       await toast.present();
 
-    }
+    },
   }
 });
 </script>
