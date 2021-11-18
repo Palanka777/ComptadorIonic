@@ -24,6 +24,6 @@ git remote add origin git@github.com:Palanka777/comptador-ionic.git || true
 git branch -M main || true
 
 # if you are deploying to https://<USERNAME>.github.io/<REPO>
-git push -f git@github.com:Palanka777/comptador-ionic.git main
+git push -f git@github.com:Palanka777/comptador-ionic.git main:gh-pages
 
 cd -
