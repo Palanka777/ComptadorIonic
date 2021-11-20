@@ -1,7 +1,7 @@
 <template>
   <ion-page>
-    <ion-header :translucent="true">
-      <ion-toolbar>
+    <ion-header :translucent="true" color="secundary">
+      <ion-toolbar color="primary">
         <ion-title>Time Fighter</ion-title>
         <ion-buttons slot="primary">
           <ion-button color="primary" fill="solid" @click="infoAlert">
@@ -11,11 +11,11 @@
       </ion-toolbar>
     </ion-header>
     
-    <ion-content :fullscreen="true">
-      <ion-header class="ion-no-border ion-padding-top ion-padding-horizontal">
-        <ion-grid>
+    <ion-content :fullscreen="true"  color="tertiary">
+      <ion-header color="secundary" class="ion-no-border ion-padding-top ion-padding-horizontal">
+        <ion-grid >
           <ion-row>
-            <ion-col class="ion-text-start">
+            <ion-col class="ion-text-start" id="scoreBlink">
               Your Score: {{ score }}
             </ion-col>
             <ion-col class="ion-text-end">
@@ -26,7 +26,7 @@
       </ion-header>
     
       <div id="container">
-        <ion-button color="primary" @click="tap">TAP ME</ion-button>
+        <ion-button id="TapMeButton" color="primary" @click="tap">TAP ME</ion-button>
       </div>
     </ion-content>
   </ion-page>
@@ -34,7 +34,7 @@
 
 <script>
 import {
-  alertController,
+  alertController, createAnimation,
   IonButton,
   IonButtons, IonCol,
   IonContent, IonGrid,
@@ -46,7 +46,7 @@ import {
 } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import {informationCircleOutline} from "ionicons/icons"
-const INITIAL_TIME=5
+const INITIAL_TIME=60
 const SCORE_INITIAL=0
 export default defineComponent({
   name: 'Home',
@@ -93,7 +93,24 @@ export default defineComponent({
     }
   },
   methods: {
+    bounce(){
+    const animation = createAnimation()
+        animation.addElement(document.getElementById('TapMeButton'))
+        .duration(2000)
+        .fromTo('transform', 'scale(2.0)', 'scale(1.0)')
+        animation.play();
+    },
+
+    blink(){
+      const animation = createAnimation()
+      animation.addElement(document.getElementById('scoreBlink'))
+          .duration(500)
+          .fromTo('opacity', '0', '1')
+      animation.play();
+    },
+
     async infoAlert() {
+
       const alert = await alertController
           .create({
             header: 'Time Fighter 1.1',
@@ -103,7 +120,11 @@ export default defineComponent({
           });
       await alert.present();
     },
+
     async tap() {
+
+      this.blink()
+      this.bounce()
       this.score++
       if(!this.started){
         this.counterInterval = setInterval( () => {
